@@ -3841,6 +3841,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-contracts"
+version = "2.0.0"
+source = "git+https://github.com/paritytech/substrate#184527825c0f9c2037df99406fec029d3cfbba12"
+dependencies = [
+ "bitflags",
+ "frame-support",
+ "frame-system",
+ "pallet-contracts-primitives",
+ "parity-scale-codec",
+ "parity-wasm",
+ "pwasm-utils",
+ "serde",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-sandbox",
+ "sp-std",
+ "wasmi-validation",
+]
+
+[[package]]
+name = "pallet-contracts-primitives"
+version = "2.0.0"
+source = "git+https://github.com/paritytech/substrate#184527825c0f9c2037df99406fec029d3cfbba12"
+dependencies = [
+ "parity-scale-codec",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
 name = "pallet-democracy"
 version = "2.0.0"
 source = "git+https://github.com/paritytech/substrate#c2469ebdfbb9d051f892c7b896e835d78d60838d"
@@ -5226,6 +5257,8 @@ dependencies = [
  "pallet-babe",
  "pallet-balances",
  "pallet-collective",
+ "pallet-contracts",
+ "pallet-contracts-primitives",
  "pallet-democracy",
  "pallet-elections-phragmen",
  "pallet-grandpa",
@@ -8251,6 +8284,19 @@ dependencies = [
  "proc-macro2 1.0.18",
  "quote 1.0.7",
  "syn 1.0.33",
+]
+
+[[package]]
+name = "sp-sandbox"
+version = "0.8.0"
+source = "git+https://github.com/paritytech/substrate#184527825c0f9c2037df99406fec029d3cfbba12"
+dependencies = [
+ "parity-scale-codec",
+ "sp-core",
+ "sp-io",
+ "sp-std",
+ "sp-wasm-interface",
+ "wasmi",
 ]
 
 [[package]]

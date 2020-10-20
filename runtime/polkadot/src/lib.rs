@@ -87,14 +87,14 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 // Polkadot version identifier;
 /// Runtime version (Polkadot).
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-	spec_name: create_runtime_str!("polkadot"),
-	impl_name: create_runtime_str!("parity-polkadot"),
+	spec_name: create_runtime_str!("pirl"),
+	impl_name: create_runtime_str!("starkley-pirl"),
 	authoring_version: 0,
-	spec_version: 26,
+	spec_version: 1,
 	impl_version: 0,
 	#[cfg(not(feature = "disable-runtime-api"))]
 	apis: RUNTIME_API_VERSIONS,
-	#[cfg(feature = "disable-runtime-api")]
+	#[cfg(feature = "disable-runtime-api")] 
 	apis: version::create_apis_vec![[]],
 	transaction_version: 5,
 };
@@ -121,7 +121,7 @@ impl Filter<Call> for BaseFilter {
 			Call::Session(_) | Call::Grandpa(_) | Call::ImOnline(_) |
 			Call::AuthorityDiscovery(_) |
 			Call::Utility(_) | Call::Claims(_) | Call::Vesting(_) |
-			Call::Identity(_) | Call::Proxy(_) | Call::Multisig(_)
+			Call::Identity(_) | Call::Proxy(_) | Call::Multisig(_) | Call::Contracts(_)
 			=> true,
 		}
 	}
@@ -270,6 +270,38 @@ impl pallet_timestamp::Trait for Runtime {
 parameter_types! {
 	pub const UncleGenerations: u32 = 0;
 }
+
+parameter_types! {
+    pub const TombstoneDeposit: Balance = 16 * MILLICENTS;
+    pub const RentByteFee: Balance = 4 * MILLICENTS;
+    pub const RentDepositOffset: Balance = 1000 * MILLICENTS;
+    pub const SurchargeReward: Balance = 150 * MILLICENTS;
+}
+
+
+
+impl pallet_contracts::Trait for Runtime {
+    type Time = Timestamp;
+    type Randomness = RandomnessCollectiveFlip;
+    type Currency = Balances;
+    type Event = Event;
+    type DetermineContractAddress = pallet_contracts::SimpleAddressDeterminer<Runtime>;
+    type TrieIdGenerator = pallet_contracts::TrieIdFromParentCounter<Runtime>;
+    type RentPayment = ();
+    type SignedClaimHandicap = pallet_contracts::DefaultSignedClaimHandicap;
+    type TombstoneDeposit = TombstoneDeposit;
+    type StorageSizeOffset = pallet_contracts::DefaultStorageSizeOffset;
+    type RentByteFee = RentByteFee;
+    type RentDepositOffset = RentDepositOffset;
+    type SurchargeReward = SurchargeReward;
+    type MaxDepth = pallet_contracts::DefaultMaxDepth;
+    type MaxValueSize = pallet_contracts::DefaultMaxValueSize;
+	type WeightPrice = pallet_transaction_payment::Module<Self>;
+	type WeightInfo = ();
+}
+
+
+
 
 // TODO: substrate#2986 implement this properly
 impl pallet_authorship::Trait for Runtime {
@@ -853,7 +885,8 @@ impl InstanceFilter<Call> for ProxyType {
 				Call::Utility(..) |
 				Call::Identity(..) |
 				Call::Proxy(..) |
-				Call::Multisig(..)
+				Call::Multisig(..) |
+				Call::Contracts(..)
 			),
 			ProxyType::Governance => matches!(c,
 				Call::Democracy(..) | Call::Council(..) | Call::TechnicalCommittee(..)
@@ -980,6 +1013,8 @@ construct_runtime! {
 
 		// Multisig dispatch. Late addition.
 		Multisig: pallet_multisig::{Module, Call, Storage, Event<T>} = 30,
+
+		Contracts: pallet_contracts::{Module, Call, Config<T>, Storage, Event<T>} = 34,
 	}
 }
 

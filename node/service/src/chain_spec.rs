@@ -36,6 +36,7 @@ use sp_runtime::{traits::IdentifyAccount, Perbill};
 use telemetry::TelemetryEndpoints;
 use westend::constants::currency::DOTS as WND;
 use westend_runtime as westend;
+use polkadot_runtime::ContractsConfig;
 
 const POLKADOT_STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
 const KUSAMA_STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
@@ -165,10 +166,14 @@ fn polkadot_staging_testnet_config_genesis(wasm_binary: &[u8]) -> polkadot::Gene
 	const STASH: u128 = 100 * DOTS;
 
 	polkadot::GenesisConfig {
+		pallet_contracts: Some(polkadot_runtime::ContractsConfig {
+			current_schedule: Default::default(),
+		}),
 		frame_system: Some(polkadot::SystemConfig {
 			code: wasm_binary.to_vec(),
 			changes_trie_config: Default::default(),
 		}),
+		
 		pallet_balances: Some(polkadot::BalancesConfig {
 			balances: endowed_accounts
 				.iter()
@@ -233,7 +238,9 @@ fn polkadot_staging_testnet_config_genesis(wasm_binary: &[u8]) -> polkadot::Gene
 			claims: vec![],
 			vesting: vec![],
 		}),
+
 		pallet_vesting: Some(polkadot::VestingConfig { vesting: vec![] }),
+		
 	}
 }
 
@@ -578,6 +585,7 @@ fn kusama_staging_testnet_config_genesis(wasm_binary: &[u8]) -> kusama::GenesisC
 			members: vec![],
 			phantom: Default::default(),
 		}),
+		
 		pallet_membership_Instance1: Some(Default::default()),
 		pallet_babe: Some(Default::default()),
 		pallet_grandpa: Some(Default::default()),
@@ -930,6 +938,9 @@ pub fn polkadot_testnet_genesis(
 	const STASH: u128 = 100 * DOTS;
 
 	polkadot::GenesisConfig {
+		pallet_contracts: Some(polkadot_runtime::ContractsConfig {
+			current_schedule: Default::default(),
+		}),
 		frame_system: Some(polkadot::SystemConfig {
 			code: wasm_binary.to_vec(),
 			changes_trie_config: Default::default(),
@@ -993,6 +1004,7 @@ pub fn polkadot_testnet_genesis(
 		pallet_grandpa: Some(Default::default()),
 		pallet_im_online: Some(Default::default()),
 		pallet_authority_discovery: Some(polkadot::AuthorityDiscoveryConfig { keys: vec![] }),
+		
 		claims: Some(polkadot::ClaimsConfig {
 			claims: vec![],
 			vesting: vec![],
