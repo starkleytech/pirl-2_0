@@ -139,7 +139,7 @@ pub trait ClientHandle {
 /// See [`ExecuteWithClient`] for more information.
 #[derive(Clone)]
 pub enum Client {
-	Polkadot(Arc<crate::FullClient<polkadot_runtime::RuntimeApi, crate::PolkadotExecutor>>),
+	Polkadot(Arc<crate::FullClient<pirl_runtime::RuntimeApi, crate::PolkadotExecutor>>),
 	Westend(Arc<crate::FullClient<westend_runtime::RuntimeApi, crate::WestendExecutor>>),
 	Kusama(Arc<crate::FullClient<kusama_runtime::RuntimeApi, crate::KusamaExecutor>>),
 	Rococo(Arc<crate::FullClient<rococo_runtime::RuntimeApi, crate::RococoExecutor>>),

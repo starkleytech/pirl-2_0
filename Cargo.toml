@@ -30,7 +30,7 @@ members = [
 	"primitives",
 	"runtime/common",
 	"runtime/parachains",
-	"runtime/polkadot",
+	"runtime/pirl",
 	"runtime/kusama",
 	"runtime/rococo-v1",
 	"runtime/westend",

@@ -2,7 +2,7 @@
 
 Native runtimes:
 
-- Polkadot: **<%= polkadot_runtime %>**
+- Polkadot: **<%= pirl_runtime %>**
 - Kusama: **<%= kusama_runtime %>**
 - Westend: **<%= westend_runtime %>**
 
@@ -14,7 +14,7 @@ This release was tested against the following versions of `rustc`. Other version
 WASM runtimes built with [srtool](https://gitlab.com/chevdor/srtool) using `<%= polkadot_json['rustc'] %>`.
 
 Proposal hashes:
-* `polkadot_runtime-v<%= polkadot_runtime %>.compact.wasm - <%= polkadot_json['prop'] %>`
+* `pirl_runtime-v<%= pirl_runtime %>.compact.wasm - <%= polkadot_json['prop'] %>`
 * `kusama_runtime-v<%= kusama_runtime %>.compact.wasm - <%= kusama_json['prop'] %>`
 
 <% unless misc_changes.empty? %>

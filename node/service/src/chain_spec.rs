@@ -24,9 +24,9 @@ use kusama::constants::currency::DOTS as KSM;
 use kusama_runtime as kusama;
 use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
 use pallet_staking::Forcing;
-use polkadot::constants::currency::DOTS;
+use pirl::constants::currency::DOTS;
 use polkadot_primitives::v1::{AccountId, AccountPublic, ValidatorId};
-use polkadot_runtime as polkadot;
+use pirl_runtime as pirl;
 use rococo_runtime as rococo;
 use rococo_runtime::constants::currency::DOTS as ROC;
 use sc_chain_spec::{ChainSpecExtension, ChainType};
@@ -36,13 +36,12 @@ use sp_runtime::{traits::IdentifyAccount, Perbill};
 use telemetry::TelemetryEndpoints;
 use westend::constants::currency::DOTS as WND;
 use westend_runtime as westend;
-use polkadot_runtime::ContractsConfig;
 
 const POLKADOT_STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
 const KUSAMA_STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
 const WESTEND_STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
 const ROCOCO_STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
-const DEFAULT_PROTOCOL_ID: &str = "dot";
+const DEFAULT_PROTOCOL_ID: &str = "pirl";
 
 /// Node `ChainSpec` extensions.
 ///
@@ -58,7 +57,7 @@ pub struct Extensions {
 }
 
 /// The `ChainSpec` parametrised for the polkadot runtime.
-pub type PolkadotChainSpec = service::GenericChainSpec<polkadot::GenesisConfig, Extensions>;
+pub type PolkadotChainSpec = service::GenericChainSpec<pirl::GenesisConfig, Extensions>;
 
 /// The `ChainSpec` parametrised for the kusama runtime.
 pub type KusamaChainSpec = service::GenericChainSpec<kusama::GenesisConfig, Extensions>;
@@ -91,8 +90,8 @@ fn polkadot_session_keys(
 	im_online: ImOnlineId,
 	parachain_validator: ValidatorId,
 	authority_discovery: AuthorityDiscoveryId,
-) -> polkadot::SessionKeys {
-	polkadot::SessionKeys {
+) -> pirl::SessionKeys {
+	pirl::SessionKeys {
 		babe,
 		grandpa,
 		im_online,
@@ -148,7 +147,7 @@ fn rococo_session_keys(
 	}
 }
 
-fn polkadot_staging_testnet_config_genesis(wasm_binary: &[u8]) -> polkadot::GenesisConfig {
+fn polkadot_staging_testnet_config_genesis(wasm_binary: &[u8]) -> pirl::GenesisConfig {
 	// subkey inspect "$SECRET"
 	let endowed_accounts = vec![];
 
@@ -165,24 +164,24 @@ fn polkadot_staging_testnet_config_genesis(wasm_binary: &[u8]) -> polkadot::Gene
 	const ENDOWMENT: u128 = 1_000_000 * DOTS;
 	const STASH: u128 = 100 * DOTS;
 
-	polkadot::GenesisConfig {
-		pallet_contracts: Some(polkadot_runtime::ContractsConfig {
+	pirl::GenesisConfig {
+		pallet_contracts: Some(pirl_runtime::ContractsConfig {
 			current_schedule: Default::default(),
 		}),
-		frame_system: Some(polkadot::SystemConfig {
+		frame_system: Some(pirl::SystemConfig {
 			code: wasm_binary.to_vec(),
 			changes_trie_config: Default::default(),
 		}),
 		
-		pallet_balances: Some(polkadot::BalancesConfig {
+		pallet_balances: Some(pirl::BalancesConfig {
 			balances: endowed_accounts
 				.iter()
 				.map(|k: &AccountId| (k.clone(), ENDOWMENT))
 				.chain(initial_authorities.iter().map(|x| (x.0.clone(), STASH)))
 				.collect(),
 		}),
-		pallet_indices: Some(polkadot::IndicesConfig { indices: vec![] }),
-		pallet_session: Some(polkadot::SessionConfig {
+		pallet_indices: Some(pirl::IndicesConfig { indices: vec![] }),
+		pallet_session: Some(pirl::SessionConfig {
 			keys: initial_authorities
 				.iter()
 				.map(|x| {
@@ -200,7 +199,7 @@ fn polkadot_staging_testnet_config_genesis(wasm_binary: &[u8]) -> polkadot::Gene
 				})
 				.collect::<Vec<_>>(),
 		}),
-		pallet_staking: Some(polkadot::StakingConfig {
+		pallet_staking: Some(pirl::StakingConfig {
 			validator_count: 50,
 			minimum_validator_count: 4,
 			stakers: initial_authorities
@@ -210,7 +209,7 @@ fn polkadot_staging_testnet_config_genesis(wasm_binary: &[u8]) -> polkadot::Gene
 						x.0.clone(),
 						x.1.clone(),
 						STASH,
-						polkadot::StakerStatus::Validator,
+						pirl::StakerStatus::Validator,
 					)
 				})
 				.collect(),
@@ -221,11 +220,11 @@ fn polkadot_staging_testnet_config_genesis(wasm_binary: &[u8]) -> polkadot::Gene
 		}),
 		pallet_elections_phragmen: Some(Default::default()),
 		pallet_democracy: Some(Default::default()),
-		pallet_collective_Instance1: Some(polkadot::CouncilConfig {
+		pallet_collective_Instance1: Some(pirl::CouncilConfig {
 			members: vec![],
 			phantom: Default::default(),
 		}),
-		pallet_collective_Instance2: Some(polkadot::TechnicalCommitteeConfig {
+		pallet_collective_Instance2: Some(pirl::TechnicalCommitteeConfig {
 			members: vec![],
 			phantom: Default::default(),
 		}),
@@ -233,13 +232,13 @@ fn polkadot_staging_testnet_config_genesis(wasm_binary: &[u8]) -> polkadot::Gene
 		pallet_babe: Some(Default::default()),
 		pallet_grandpa: Some(Default::default()),
 		pallet_im_online: Some(Default::default()),
-		pallet_authority_discovery: Some(polkadot::AuthorityDiscoveryConfig { keys: vec![] }),
-		claims: Some(polkadot::ClaimsConfig {
+		pallet_authority_discovery: Some(pirl::AuthorityDiscoveryConfig { keys: vec![] }),
+		claims: Some(pirl::ClaimsConfig {
 			claims: vec![],
 			vesting: vec![],
 		}),
 
-		pallet_vesting: Some(polkadot::VestingConfig { vesting: vec![] }),
+		pallet_vesting: Some(pirl::VestingConfig { vesting: vec![] }),
 		
 	}
 }
@@ -780,7 +779,7 @@ fn rococo_staging_testnet_config_genesis(wasm_binary: &[u8]) -> rococo_runtime::
 
 /// Polkadot staging testnet config.
 pub fn polkadot_staging_testnet_config() -> Result<PolkadotChainSpec, String> {
-	let wasm_binary = polkadot::WASM_BINARY.ok_or("Polkadot development wasm not available")?;
+	let wasm_binary = pirl::WASM_BINARY.ok_or("pirl development wasm not available")?;
 	let boot_nodes = vec![];
 
 	Ok(PolkadotChainSpec::from_genesis(
@@ -791,7 +790,7 @@ pub fn polkadot_staging_testnet_config() -> Result<PolkadotChainSpec, String> {
 		boot_nodes,
 		Some(
 			TelemetryEndpoints::new(vec![(POLKADOT_STAGING_TELEMETRY_URL.to_string(), 0)])
-				.expect("Polkadot Staging telemetry url is valid; qed"),
+				.expect("pirl Staging telemetry url is valid; qed"),
 		),
 		Some(DEFAULT_PROTOCOL_ID),
 		None,
@@ -931,28 +930,28 @@ pub fn polkadot_testnet_genesis(
 	)>,
 	_root_key: AccountId,
 	endowed_accounts: Option<Vec<AccountId>>,
-) -> polkadot::GenesisConfig {
+) -> pirl::GenesisConfig {
 	let endowed_accounts: Vec<AccountId> = endowed_accounts.unwrap_or_else(testnet_accounts);
 
 	const ENDOWMENT: u128 = 1_000_000 * DOTS;
 	const STASH: u128 = 100 * DOTS;
 
-	polkadot::GenesisConfig {
-		pallet_contracts: Some(polkadot_runtime::ContractsConfig {
+	pirl::GenesisConfig {
+		pallet_contracts: Some(pirl_runtime::ContractsConfig {
 			current_schedule: Default::default(),
 		}),
-		frame_system: Some(polkadot::SystemConfig {
+		frame_system: Some(pirl::SystemConfig {
 			code: wasm_binary.to_vec(),
 			changes_trie_config: Default::default(),
 		}),
-		pallet_indices: Some(polkadot::IndicesConfig { indices: vec![] }),
-		pallet_balances: Some(polkadot::BalancesConfig {
+		pallet_indices: Some(pirl::IndicesConfig { indices: vec![] }),
+		pallet_balances: Some(pirl::BalancesConfig {
 			balances: endowed_accounts
 				.iter()
 				.map(|k| (k.clone(), ENDOWMENT))
 				.collect(),
 		}),
-		pallet_session: Some(polkadot::SessionConfig {
+		pallet_session: Some(pirl::SessionConfig {
 			keys: initial_authorities
 				.iter()
 				.map(|x| {
@@ -970,7 +969,7 @@ pub fn polkadot_testnet_genesis(
 				})
 				.collect::<Vec<_>>(),
 		}),
-		pallet_staking: Some(polkadot::StakingConfig {
+		pallet_staking: Some(pirl::StakingConfig {
 			minimum_validator_count: 1,
 			validator_count: 2,
 			stakers: initial_authorities
@@ -980,7 +979,7 @@ pub fn polkadot_testnet_genesis(
 						x.0.clone(),
 						x.1.clone(),
 						STASH,
-						polkadot::StakerStatus::Validator,
+						pirl::StakerStatus::Validator,
 					)
 				})
 				.collect(),
@@ -990,12 +989,12 @@ pub fn polkadot_testnet_genesis(
 			..Default::default()
 		}),
 		pallet_elections_phragmen: Some(Default::default()),
-		pallet_democracy: Some(polkadot::DemocracyConfig::default()),
-		pallet_collective_Instance1: Some(polkadot::CouncilConfig {
+		pallet_democracy: Some(pirl::DemocracyConfig::default()),
+		pallet_collective_Instance1: Some(pirl::CouncilConfig {
 			members: vec![],
 			phantom: Default::default(),
 		}),
-		pallet_collective_Instance2: Some(polkadot::TechnicalCommitteeConfig {
+		pallet_collective_Instance2: Some(pirl::TechnicalCommitteeConfig {
 			members: vec![],
 			phantom: Default::default(),
 		}),
@@ -1003,13 +1002,13 @@ pub fn polkadot_testnet_genesis(
 		pallet_babe: Some(Default::default()),
 		pallet_grandpa: Some(Default::default()),
 		pallet_im_online: Some(Default::default()),
-		pallet_authority_discovery: Some(polkadot::AuthorityDiscoveryConfig { keys: vec![] }),
+		pallet_authority_discovery: Some(pirl::AuthorityDiscoveryConfig { keys: vec![] }),
 		
-		claims: Some(polkadot::ClaimsConfig {
+		claims: Some(pirl::ClaimsConfig {
 			claims: vec![],
 			vesting: vec![],
 		}),
-		pallet_vesting: Some(polkadot::VestingConfig { vesting: vec![] }),
+		pallet_vesting: Some(pirl::VestingConfig { vesting: vec![] }),
 	}
 }
 
@@ -1222,7 +1221,7 @@ pub fn rococo_testnet_genesis(
 	}
 }
 
-fn polkadot_development_config_genesis(wasm_binary: &[u8]) -> polkadot::GenesisConfig {
+fn polkadot_development_config_genesis(wasm_binary: &[u8]) -> pirl::GenesisConfig {
 	polkadot_testnet_genesis(
 		wasm_binary,
 		vec![get_authority_keys_from_seed("Alice")],
@@ -1251,7 +1250,7 @@ fn westend_development_config_genesis(wasm_binary: &[u8]) -> westend::GenesisCon
 
 /// Polkadot development config (single validator Alice)
 pub fn polkadot_development_config() -> Result<PolkadotChainSpec, String> {
-	let wasm_binary = polkadot::WASM_BINARY.ok_or("Polkadot development wasm not available")?;
+	let wasm_binary = pirl::WASM_BINARY.ok_or("pirl development wasm not available")?;
 
 	Ok(PolkadotChainSpec::from_genesis(
 		"Development",
@@ -1300,7 +1299,7 @@ pub fn westend_development_config() -> Result<WestendChainSpec, String> {
 	))
 }
 
-fn polkadot_local_testnet_genesis(wasm_binary: &[u8]) -> polkadot::GenesisConfig {
+fn polkadot_local_testnet_genesis(wasm_binary: &[u8]) -> pirl::GenesisConfig {
 	polkadot_testnet_genesis(
 		wasm_binary,
 		vec![
@@ -1314,7 +1313,7 @@ fn polkadot_local_testnet_genesis(wasm_binary: &[u8]) -> polkadot::GenesisConfig
 
 /// Polkadot local testnet config (multivalidator Alice + Bob)
 pub fn polkadot_local_testnet_config() -> Result<PolkadotChainSpec, String> {
-	let wasm_binary = polkadot::WASM_BINARY.ok_or("Polkadot development wasm not available")?;
+	let wasm_binary = pirl::WASM_BINARY.ok_or("pirl development wasm not available")?;
 
 	Ok(PolkadotChainSpec::from_genesis(
 		"Local Testnet",

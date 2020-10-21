@@ -95,7 +95,7 @@ impl SubstrateCli for Cli {
 		} else if spec.is_rococo() {
 			&service::rococo_runtime::VERSION
 		} else {
-			&service::polkadot_runtime::VERSION
+			&service::pirl_runtime::VERSION
 		}
 	}
 }
