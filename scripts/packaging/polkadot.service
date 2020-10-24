@@ -1,13 +1,13 @@
 [Unit]
-Description=Polkadot Node
+Description=Pirl Node
 After=network.target
-Documentation=https://github.com/paritytech/polkadot
+Documentation=https://github.com/starkleytech/pirl
 
 [Service]
-EnvironmentFile=-/etc/default/polkadot
-ExecStart=/usr/bin/polkadot $POLKADOT_CLI_ARGS
-User=polkadot
-Group=polkadot
+EnvironmentFile=-/etc/default/pirl
+ExecStart=/usr/bin/pirl $POLKADOT_CLI_ARGS
+User=pirl
+Group=pirl
 Restart=always
 RestartSec=120
 MemoryHigh=5400M

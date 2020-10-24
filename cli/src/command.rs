@@ -27,7 +27,7 @@ fn get_exec_name() -> Option<String> {
 }
 
 impl SubstrateCli for Cli {
-	fn impl_name() -> String { "Parity Polkadot".into() }
+	fn impl_name() -> String { "Starkley Pirl".into() }
 
 	fn impl_version() -> String { env!("SUBSTRATE_CLI_IMPL_VERSION").into() }
 
@@ -35,19 +35,19 @@ impl SubstrateCli for Cli {
 
 	fn author() -> String { env!("CARGO_PKG_AUTHORS").into() }
 
-	fn support_url() -> String { "https://github.com/paritytech/polkadot/issues/new".into() }
+	fn support_url() -> String { "https://github.com/starkleytech/pirl/issues/new".into() }
 
 	fn copyright_start_year() -> i32 { 2017 }
 
-	fn executable_name() -> String { "polkadot".into() }
+	fn executable_name() -> String { "pirl".into() }
 
 	fn load_spec(&self, id: &str) -> std::result::Result<Box<dyn sc_service::ChainSpec>, String> {
 		let id = if id == "" {
 			let n = get_exec_name().unwrap_or_default();
-			["polkadot", "kusama", "westend", "rococo"].iter()
+			["pirl", "kusama", "westend", "rococo"].iter()
 				.cloned()
 				.find(|&chain| n.starts_with(chain))
-				.unwrap_or("polkadot")
+				.unwrap_or("pirl")
 		} else { id };
 		Ok(match id {
 			"polkadot-dev" | "dev" => Box::new(service::chain_spec::polkadot_development_config()?),
@@ -56,7 +56,7 @@ impl SubstrateCli for Cli {
 			"kusama-dev" => Box::new(service::chain_spec::kusama_development_config()?),
 			"kusama-local" => Box::new(service::chain_spec::kusama_local_testnet_config()?),
 			"kusama-staging" => Box::new(service::chain_spec::kusama_staging_testnet_config()?),
-			"polkadot" => Box::new(service::chain_spec::polkadot_config()?),
+			"pirl" => Box::new(service::chain_spec::pirl_config()?),
 			"westend" => Box::new(service::chain_spec::westend_config()?),
 			"kusama" => Box::new(service::chain_spec::kusama_config()?),
 			"westend-dev" => Box::new(service::chain_spec::westend_development_config()?),

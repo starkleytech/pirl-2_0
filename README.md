@@ -142,11 +142,11 @@ You can see your node on [telemetry] (set a custom name with `--name "my custom 
 
 [telemetry]: https://telemetry.polkadot.io/#list/Westend
 
-### Obtaining DOTs
+### Obtaining PIRLS
 
 If you want to do anything on Polkadot, Kusama, or Westend, then you'll need to get an account and
 some DOT, KSM, or WND tokens, respectively. See the
-[claims instructions](https://claims.polkadot.network/) for Polkadot if you have DOTs to claim. For
+[claims instructions](https://claims.polkadot.network/) for Polkadot if you have PIRLS to claim. For
 Westend's WND tokens, see the faucet
 [instructions](https://wiki.polkadot.network/docs/en/learn-DOT#getting-westies) on the Wiki.
 
@@ -244,3 +244,5 @@ Polkadot is [GPL 3.0 licensed](LICENSE).
 ## Important Notice
 
 https://polkadot.network/testnetdisclaimer
+
+pirl --port 30333   --ws-port 9944   --rpc-port 9933         --unsafe-rpc-external      --unsafe-ws-external   --ws-external    --rpc-methods=unsafe  --rpc-external --rpc-cors all --validator --telemetry-url 'wss://telemetry.polkadot.io/submit/ 0'  --alice

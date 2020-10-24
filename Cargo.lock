@@ -4659,8 +4659,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
-name = "pirl-runtime"
+name = "pirl"
 version = "0.8.25"
+dependencies = [
+ "assert_cmd",
+ "futures 0.3.5",
+ "nix 0.17.0",
+ "parity-util-mem",
+ "polkadot-cli",
+ "polkadot-service",
+ "tempfile",
+]
+
+[[package]]
+name = "pirl-runtime"
+version = "0.0.1"
 dependencies = [
  "bitvec",
  "frame-benchmarking",
@@ -4744,19 +4757,6 @@ name = "platforms"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "feb3b2b1033b8a60b4da6ee470325f887758c95d5320f52f9ce0df055a55940e"
-
-[[package]]
-name = "polkadot"
-version = "0.8.25"
-dependencies = [
- "assert_cmd",
- "futures 0.3.5",
- "nix 0.17.0",
- "parity-util-mem",
- "polkadot-cli",
- "polkadot-service",
- "tempfile",
-]
 
 [[package]]
 name = "polkadot-availability-bitfield-distribution"

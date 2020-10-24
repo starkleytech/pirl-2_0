@@ -19,7 +19,7 @@ use grandpa::AuthorityId as GrandpaId;
 use pallet_staking::Forcing;
 use polkadot_primitives::v0::{ValidatorId, AccountId};
 use polkadot_service::chain_spec::{get_account_id_from_seed, get_from_seed, Extensions};
-use polkadot_test_runtime::constants::currency::DOTS;
+use polkadot_test_runtime::constants::currency::PIRLS;
 use sc_chain_spec::{ChainSpec, ChainType};
 use sp_core::{sr25519, ChangesTrieConfiguration};
 use sp_runtime::Perbill;
@@ -102,8 +102,8 @@ fn polkadot_testnet_genesis(
 
 	let endowed_accounts: Vec<AccountId> = endowed_accounts.unwrap_or_else(testnet_accounts);
 
-	const ENDOWMENT: u128 = 1_000_000 * DOTS;
-	const STASH: u128 = 100 * DOTS;
+	const ENDOWMENT: u128 = 1_000_000 * PIRLS;
+	const STASH: u128 = 100 * PIRLS;
 
 	polkadot::GenesisConfig {
 		frame_system: Some(polkadot::SystemConfig {

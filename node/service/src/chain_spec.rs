@@ -20,21 +20,21 @@ use authority_discovery_primitives::AuthorityId as AuthorityDiscoveryId;
 use babe_primitives::AuthorityId as BabeId;
 use grandpa::AuthorityId as GrandpaId;
 use hex_literal::hex;
-use kusama::constants::currency::DOTS as KSM;
+use kusama::constants::currency::PIRLS as KSM;
 use kusama_runtime as kusama;
 use pallet_im_online::sr25519::AuthorityId as ImOnlineId;
 use pallet_staking::Forcing;
-use pirl::constants::currency::DOTS;
+use pirl::constants::currency::PIRLS;
 use polkadot_primitives::v1::{AccountId, AccountPublic, ValidatorId};
 use pirl_runtime as pirl;
 use rococo_runtime as rococo;
-use rococo_runtime::constants::currency::DOTS as ROC;
+use rococo_runtime::constants::currency::PIRLS as ROC;
 use sc_chain_spec::{ChainSpecExtension, ChainType};
 use serde::{Deserialize, Serialize};
 use sp_core::{crypto::UncheckedInto, sr25519, Pair, Public};
 use sp_runtime::{traits::IdentifyAccount, Perbill};
 use telemetry::TelemetryEndpoints;
-use westend::constants::currency::DOTS as WND;
+use westend::constants::currency::PIRLS as WND;
 use westend_runtime as westend;
 
 const POLKADOT_STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
@@ -68,8 +68,8 @@ pub type WestendChainSpec = service::GenericChainSpec<westend::GenesisConfig, Ex
 /// The `ChainSpec` parametrized for the rococo runtime.
 pub type RococoChainSpec = service::GenericChainSpec<rococo::GenesisConfig, Extensions>;
 
-pub fn polkadot_config() -> Result<PolkadotChainSpec, String> {
-	PolkadotChainSpec::from_json_bytes(&include_bytes!("../res/polkadot.json")[..])
+pub fn pirl_config() -> Result<PolkadotChainSpec, String> {
+	PolkadotChainSpec::from_json_bytes(&include_bytes!("../res/pirl.json")[..])
 }
 
 pub fn kusama_config() -> Result<KusamaChainSpec, String> {
@@ -161,8 +161,8 @@ fn polkadot_staging_testnet_config_genesis(wasm_binary: &[u8]) -> pirl::GenesisC
 		AuthorityDiscoveryId,
 	)> = vec![];
 
-	const ENDOWMENT: u128 = 1_000_000 * DOTS;
-	const STASH: u128 = 100 * DOTS;
+	const ENDOWMENT: u128 = 1_000_000 * PIRLS;
+	const STASH: u128 = 100 * PIRLS;
 
 	pirl::GenesisConfig {
 		pallet_contracts: Some(pirl_runtime::ContractsConfig {
@@ -933,8 +933,8 @@ pub fn polkadot_testnet_genesis(
 ) -> pirl::GenesisConfig {
 	let endowed_accounts: Vec<AccountId> = endowed_accounts.unwrap_or_else(testnet_accounts);
 
-	const ENDOWMENT: u128 = 1_000_000 * DOTS;
-	const STASH: u128 = 100 * DOTS;
+	const ENDOWMENT: u128 = 1_000_000 * PIRLS;
+	const STASH: u128 = 100 * PIRLS;
 
 	pirl::GenesisConfig {
 		pallet_contracts: Some(pirl_runtime::ContractsConfig {
@@ -1121,8 +1121,8 @@ pub fn westend_testnet_genesis(
 ) -> westend::GenesisConfig {
 	let endowed_accounts: Vec<AccountId> = endowed_accounts.unwrap_or_else(testnet_accounts);
 
-	const ENDOWMENT: u128 = 1_000_000 * DOTS;
-	const STASH: u128 = 100 * DOTS;
+	const ENDOWMENT: u128 = 1_000_000 * PIRLS;
+	const STASH: u128 = 100 * PIRLS;
 
 	westend::GenesisConfig {
 		frame_system: Some(westend::SystemConfig {
@@ -1191,7 +1191,7 @@ pub fn rococo_testnet_genesis(
 ) -> rococo_runtime::GenesisConfig {
 	let endowed_accounts: Vec<AccountId> = endowed_accounts.unwrap_or_else(testnet_accounts);
 
-	const ENDOWMENT: u128 = 1_000_000 * DOTS;
+	const ENDOWMENT: u128 = 1_000_000 * PIRLS;
 
 	rococo_runtime::GenesisConfig {
 		frame_system: Some(rococo_runtime::SystemConfig {
