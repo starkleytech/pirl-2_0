@@ -23,5 +23,3 @@ Connect to the global Polkadot Mainnet network by running:
 You can see your node on [telemetry] (set a custom name with `--name "my custom name"`).
 
 [telemetry]: https://telemetry.polkadot.io/#list/Pirl
-
-pirl --port 30333   --ws-port 9944   --rpc-port 9933         --unsafe-rpc-external      --unsafe-ws-external   --ws-external    --rpc-methods=unsafe  --rpc-external --rpc-cors all --validator --telemetry-url 'wss://telemetry.polkadot.io/submit/ 0'  --alice
