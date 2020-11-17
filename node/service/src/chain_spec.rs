@@ -200,7 +200,7 @@ fn polkadot_staging_testnet_config_genesis(wasm_binary: &[u8]) -> pirl::GenesisC
 				.collect::<Vec<_>>(),
 		}),
 		pallet_staking: Some(pirl::StakingConfig {
-			validator_count: 50,
+			validator_count: 100,
 			minimum_validator_count: 4,
 			stakers: initial_authorities
 				.iter()
