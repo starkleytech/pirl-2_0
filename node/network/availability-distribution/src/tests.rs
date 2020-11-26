@@ -17,22 +17,21 @@
 use super::*;
 use assert_matches::assert_matches;
 use polkadot_erasure_coding::{branches, obtain_chunks_v1 as obtain_chunks};
+use polkadot_node_network_protocol::ObservedRole;
+use polkadot_node_subsystem_util::TimeoutExt;
 use polkadot_primitives::v1::{
 	AvailableData, BlockData, CandidateCommitments, CandidateDescriptor, GroupIndex,
-	GroupRotationInfo, HeadData, PersistedValidationData, OccupiedCore,
-	PoV, ScheduledCore,
+	GroupRotationInfo, HeadData, OccupiedCore, PersistedValidationData, PoV, ScheduledCore,
 };
-use polkadot_subsystem_testhelpers::{self as test_helpers};
-use polkadot_node_subsystem_util::TimeoutExt;
-use polkadot_node_network_protocol::ObservedRole;
+use polkadot_subsystem_testhelpers as test_helpers;
 
 use futures::{executor, future, Future};
 use futures_timer::Delay;
-use smallvec::smallvec;
-use std::{sync::Arc, time::Duration};
 use sc_keystore::LocalKeystore;
-use sp_keystore::{SyncCryptoStorePtr, SyncCryptoStore};
+use smallvec::smallvec;
 use sp_application_crypto::AppKey;
+use sp_keystore::{SyncCryptoStore, SyncCryptoStorePtr};
+use std::{sync::Arc, time::Duration};
 
 macro_rules! view {
 		( $( $hash:expr ),* $(,)? ) => [
@@ -46,9 +45,9 @@ macro_rules! delay {
 	};
 }
 
-fn chunk_protocol_message(message: AvailabilityGossipMessage)
-	-> protocol_v1::AvailabilityDistributionMessage
-{
+fn chunk_protocol_message(
+	message: AvailabilityGossipMessage,
+) -> protocol_v1::AvailabilityDistributionMessage {
 	protocol_v1::AvailabilityDistributionMessage::Chunk(
 		message.candidate_hash,
 		message.erasure_chunk,
@@ -104,7 +103,7 @@ async fn overseer_send(
 	overseer: &mut test_helpers::TestSubsystemContextHandle<AvailabilityDistributionMessage>,
 	msg: AvailabilityDistributionMessage,
 ) {
-	log::trace!("Sending message:\n{:?}", &msg);
+	tracing::trace!(msg = ?msg, "sending message");
 	overseer
 		.send(FromOverseer::Communication { msg })
 		.timeout(TIMEOUT)
@@ -115,13 +114,13 @@ async fn overseer_send(
 async fn overseer_recv(
 	overseer: &mut test_helpers::TestSubsystemContextHandle<AvailabilityDistributionMessage>,
 ) -> AllMessages {
-	log::trace!("Waiting for message ...");
+	tracing::trace!("waiting for message ...");
 	let msg = overseer
 		.recv()
 		.timeout(TIMEOUT)
 		.await
 		.expect("TIMEOUT is enough to recv.");
-	log::trace!("Received message:\n{:?}", &msg);
+	tracing::trace!(msg = ?msg, "received message");
 	msg
 }
 
@@ -175,8 +174,12 @@ impl Default for TestState {
 
 		let keystore: SyncCryptoStorePtr = Arc::new(LocalKeystore::in_memory());
 
-		SyncCryptoStore::sr25519_generate_new(&*keystore, ValidatorId::ID, Some(&validators[0].to_seed()))
-			.expect("Insert key into keystore");
+		SyncCryptoStore::sr25519_generate_new(
+			&*keystore,
+			ValidatorId::ID,
+			Some(&validators[0].to_seed()),
+		)
+		.expect("Insert key into keystore");
 
 		let validator_public = validator_pubkeys(&validators);
 
@@ -214,6 +217,8 @@ impl Default for TestState {
 			parent_head: HeadData(vec![7, 8, 9]),
 			block_number: Default::default(),
 			hrmp_mqc_heads: Vec::new(),
+			dmq_mqc_head: Default::default(),
+			max_pov_size: 1024,
 		};
 
 		let validator_index = Some((validators.len() - 1) as ValidatorIndex);
@@ -237,7 +242,7 @@ impl Default for TestState {
 fn make_available_data(test: &TestState, pov: PoV) -> AvailableData {
 	AvailableData {
 		validation_data: test.persisted_validation_data.clone(),
-		pov,
+		pov: Arc::new(pov),
 	}
 }
 
@@ -250,7 +255,7 @@ fn make_erasure_root(test: &TestState, pov: PoV) -> Hash {
 
 fn make_valid_availability_gossip(
 	test: &TestState,
-	candidate_hash: Hash,
+	candidate_hash: CandidateHash,
 	erasure_chunk_index: u32,
 	pov: PoV,
 ) -> AvailabilityGossipMessage {
@@ -316,7 +321,7 @@ fn helper_integrity() {
 	.build();
 
 	let message =
-		make_valid_availability_gossip(&test_state, dbg!(candidate.hash()), 2, pov_block.clone());
+		make_valid_availability_gossip(&test_state, candidate.hash(), 2, pov_block.clone());
 
 	let root = dbg!(&candidate.commitments.erasure_root);
 
@@ -434,11 +439,11 @@ fn reputation_verification() {
 		let peer_b = PeerId::random();
 		assert_ne!(&peer_a, &peer_b);
 
-		log::trace!("peer A: {:?}", peer_a);
-		log::trace!("peer B: {:?}", peer_b);
+		tracing::trace!("peer A: {:?}", peer_a);
+		tracing::trace!("peer B: {:?}", peer_b);
 
-		log::trace!("candidate A: {:?}", candidates[0].hash());
-		log::trace!("candidate B: {:?}", candidates[1].hash());
+		tracing::trace!("candidate A: {:?}", candidates[0].hash());
+		tracing::trace!("candidate B: {:?}", candidates[1].hash());
 
 		overseer_signal(
 			&mut virtual_overseer,
@@ -622,7 +627,7 @@ fn reputation_verification() {
 		let mut candidates2 = candidates.clone();
 		// check if the availability store can provide the desired erasure chunks
 		for i in 0usize..2 {
-			log::trace!("0000");
+			tracing::trace!("0000");
 			let avail_data = make_available_data(&test_state, pov_block_a.clone());
 			let chunks =
 				derive_erasure_chunks_with_proofs(test_state.validators.len(), &avail_data);
@@ -647,10 +652,10 @@ fn reputation_verification() {
 
 			assert_eq!(chunks.len(), test_state.validators.len());
 
-			log::trace!("xxxx");
+			tracing::trace!("xxxx");
 			// retrieve a stored chunk
 			for (j, chunk) in chunks.into_iter().enumerate() {
-				log::trace!("yyyy i={}, j={}", i, j);
+				tracing::trace!("yyyy i={}, j={}", i, j);
 				if i != 0 {
 					// not a validator, so this never happens
 					break;
@@ -867,10 +872,7 @@ fn reputation_verification() {
 			overseer_send(
 				&mut virtual_overseer,
 				AvailabilityDistributionMessage::NetworkBridgeUpdateV1(
-					NetworkBridgeEvent::PeerMessage(
-						peer_a.clone(),
-						chunk_protocol_message(valid2),
-					),
+					NetworkBridgeEvent::PeerMessage(peer_a.clone(), chunk_protocol_message(valid2)),
 				),
 			)
 			.await;
