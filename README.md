@@ -23,3 +23,10 @@ Connect to the global Polkadot Mainnet network by running:
 You can see your node on [telemetry] (set a custom name with `--name "my custom name"`).
 
 [telemetry]: https://telemetry.polkadot.io/#list/Pirl
+
+
+## Build
+
+``` 
+cargo +nightly-2020-10-06-x86_64-unknown-linux-gnu build --release
+```
