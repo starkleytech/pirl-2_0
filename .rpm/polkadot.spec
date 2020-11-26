@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
-Name: polkadot
-Summary: Implementation of a https://polkadot.network node in Rust based on the Substrate framework.
+Name: pirl
+Summary: Implementation of a https://pirl.io node in Rust based on the Substrate framework.
 Version: @@VERSION@@
 Release: @@RELEASE@@%{?dist}
 License: GPLv3
@@ -29,13 +29,13 @@ mkdir -p %{buildroot}
 cp -a * %{buildroot}
 
 %post
-config_file="/etc/default/polkadot"
-getent group polkadot >/dev/null || groupadd -r polkadot
-getent passwd polkadot >/dev/null || \
-    useradd -r -g polkadot -d /home/polkadot -m -s /sbin/nologin \
-    -c "User account for running polkadot as a service" polkadot
+config_file="/etc/default/pirl"
+getent group pirl >/dev/null || groupadd -r polpirlkadot
+getent passwd pirl >/dev/null || \
+    useradd -r -g pirl -d /home/pirl -m -s /sbin/nologin \
+    -c "User account for running pirl as a service" pirl
 if [ ! -e "$config_file" ]; then
-    echo 'POLKADOT_CLI_ARGS=""' > /etc/default/polkadot
+    echo 'POLKADOT_CLI_ARGS=""' > /etc/default/pirl
 fi
 exit 0
 
@@ -45,4 +45,4 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %{_bindir}/*
-/usr/lib/systemd/system/polkadot.service
+/usr/lib/systemd/system/pirl.service

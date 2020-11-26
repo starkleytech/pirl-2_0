@@ -1,11 +1,11 @@
 
-== Polkadot Docker
+== Pirl Docker
 
-=== Start a Polkadot docker container
+=== Start a Pirl docker container
 
 Run the following command
 
-	docker run -d -P --name polkadot chevdor/polkadot:latest
+	docker run -d -P --name pirl starkleytech/pirl:latest
 
 === Building the image
 
