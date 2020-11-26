@@ -9,7 +9,7 @@ Implementation of a https://pirl.io node in Rust based on the Substrate framewor
 
 If you just wish to run a Pirl node without compiling it yourself, you may
 either run the latest binary from our
-[releases](https://github.com/pirl/pirl2/releases) page, or install
+[releases](https://github.com/pirl/pirl-2_0/releases) page, or install
 Pirl from one of our package repositories.
 
 ### Connect to Pirl Mainnet
