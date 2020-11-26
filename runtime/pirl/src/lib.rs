@@ -283,15 +283,17 @@ impl pallet_contracts::Trait for Runtime {
     type Randomness = RandomnessCollectiveFlip;
     type Currency = Balances;
     type Event = Event;
+    type DetermineContractAddress = pallet_contracts::SimpleAddressDeterminer<Runtime>;
+    type TrieIdGenerator = pallet_contracts::TrieIdFromParentCounter<Runtime>;
     type RentPayment = ();
-    type SignedClaimHandicap = pallet_contracts::SignedClaimHandicap;
+    type SignedClaimHandicap = pallet_contracts::DefaultSignedClaimHandicap;
     type TombstoneDeposit = TombstoneDeposit;
-    type StorageSizeOffset = pallet_contracts::StorageSizeOffset;
+    type StorageSizeOffset = pallet_contracts::DefaultStorageSizeOffset;
     type RentByteFee = RentByteFee;
     type RentDepositOffset = RentDepositOffset;
     type SurchargeReward = SurchargeReward;
-    type MaxDepth = pallet_contracts::MaxDepth;
-    type MaxValueSize = pallet_contracts::MaxValueSize;
+    type MaxDepth = pallet_contracts::DefaultMaxDepth;
+    type MaxValueSize = pallet_contracts::DefaultMaxValueSize;
 	type WeightPrice = pallet_transaction_payment::Module<Self>;
 	type WeightInfo = ();
 }
