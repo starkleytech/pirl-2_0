@@ -282,7 +282,7 @@ parameter_types! {
 
 
 
-impl pallet_contracts::Trait for Runtime {
+impl pallet_contracts::Config for Runtime {
 	type Time = Timestamp;
 	type Randomness = RandomnessCollectiveFlip;
 	type Currency = Balances;
