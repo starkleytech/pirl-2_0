@@ -3924,6 +3924,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-contracts-rpc"
+version = "0.8.0"
+source = "git+https://github.com/paritytech/substrate?branch=master#be8fd0588013a3b8eab5d5c761fe1c55bdd60dbb"
+dependencies = [
+ "jsonrpc-core",
+ "jsonrpc-core-client",
+ "jsonrpc-derive",
+ "pallet-contracts-primitives",
+ "pallet-contracts-rpc-runtime-api",
+ "parity-scale-codec",
+ "serde",
+ "sp-api",
+ "sp-blockchain",
+ "sp-core",
+ "sp-rpc",
+ "sp-runtime",
+]
+
+[[package]]
 name = "pallet-contracts-rpc-runtime-api"
 version = "0.8.0"
 source = "git+https://github.com/paritytech/substrate?branch=master#be8fd0588013a3b8eab5d5c761fe1c55bdd60dbb"
@@ -5407,7 +5426,7 @@ name = "polkadot-rpc"
 version = "0.8.27"
 dependencies = [
  "jsonrpc-core",
- "pallet-contracts",
+ "pallet-contracts-rpc",
  "pallet-transaction-payment-rpc",
  "parity-scale-codec",
  "polkadot-primitives",
