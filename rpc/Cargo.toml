@@ -28,3 +28,5 @@ frame-rpc-system = { package = "substrate-frame-rpc-system", git = "https://gith
 pallet-transaction-payment-rpc = { git = "https://github.com/paritytech/substrate", branch = "master" }
 parity-scale-codec = { version = "1.3.5", default-features = false }
 sp-block-builder = { git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-contracts = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false  }
+pallet-contracts = { version = "0.8.0", git = "https://github.com/paritytech/substrate", branch = "master" }
