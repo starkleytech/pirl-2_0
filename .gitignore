@@ -11,3 +11,5 @@ polkadot.*
 !.rpm/*
 .DS_Store
 .cargo
+Cargo.lock
+Cargo.lock

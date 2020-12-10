@@ -104,53 +104,7 @@ pub(crate) fn kusama_hard_forks() -> Vec<(
 	use sp_core::crypto::Ss58Codec;
 	use std::str::FromStr;
 
-	let forks = vec![
-		(
-			623,
-			"01e94e1e7e9cf07b3b0bf4e1717fce7448e5563901c2ef2e3b8e9ecaeba088b1",
-			1492283,
-		),
-		(
-			624,
-			"ddc4323c5e8966844dfaa87e0c2f74ef6b43115f17bf8e4ff38845a62d02b9a9",
-			1492436,
-		),
-		(
-			625,
-			"38ba115b296663e424e32d7b1655cd795719cef4fd7d579271a6d01086cf1628",
-			1492586,
-		),
-		(
-			626,
-			"f3172b6b8497c10fc772f5dada4eeb1f4c4919c97de9de2e1a439444d5a057ff",
-			1492955,
-		),
-		(
-			627,
-			"b26526aea299e9d24af29fdacd5cf4751a663d24894e3d0a37833aa14c58424a",
-			1493338,
-		),
-		(
-			628,
-			"3980d024327d53b8d01ef0d198a052cd058dd579508d8ed6283fe3614e0a3694",
-			1493913,
-		),
-		(
-			629,
-			"31f22997a786c25ee677786373368cae6fd501fd1bc4b212b8e267235c88179d",
-			1495083,
-		),
-		(
-			630,
-			"1c65eb250cf54b466c64f1a4003d1415a7ee275e49615450c0e0525179857eef",
-			1497404,
-		),
-		(
-			631,
-			"9e44116467cc9d7e224e36487bf2cf571698cae16b25f54a7430f1278331fdd8",
-			1498598,
-		),
-	];
+	let forks = vec![];
 
 	let authorities = vec![
 		"CwjLJ1zPWK5Ao9WChAFp7rWGEgN3AyXXjTRPrqgm5WwBpoS",
@@ -208,6 +162,7 @@ pub(crate) fn kusama_hard_forks() -> Vec<(
 		"GeYRRPkyi23wSF3cJGjq82117fKJZUbWsAGimUnzb5RPbB1",
 		"DzCJ4y5oT611dfKQwbBDVbtCfENTdMCjb4KGMU3Mq6nyUMu",
 	];
+
 
 	let authorities = authorities
 		.into_iter()

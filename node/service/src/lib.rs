@@ -65,14 +65,14 @@ pub use sp_api::{ApiRef, Core as CoreApi, ConstructRuntimeApi, ProvideRuntimeApi
 pub use sp_runtime::traits::{DigestFor, HashFor, NumberFor, Block as BlockT, self as runtime_traits, BlakeTwo256};
 
 pub use kusama_runtime;
-pub use polkadot_runtime;
+pub use pirl_runtime;
 pub use rococo_runtime;
 pub use westend_runtime;
 
 native_executor_instance!(
 	pub PolkadotExecutor,
-	polkadot_runtime::api::dispatch,
-	polkadot_runtime::native_version,
+	pirl_runtime::api::dispatch,
+	pirl_runtime::native_version,
 	frame_benchmarking::benchmarking::HostFunctions,
 );
 
@@ -872,7 +872,7 @@ pub fn new_chain_ops(mut config: &mut Configuration) -> Result<
 		Ok((Arc::new(Client::Westend(client)), backend, import_queue, task_manager))
 	} else {
 		let service::PartialComponents { client, backend, import_queue, task_manager, .. }
-			= new_partial::<polkadot_runtime::RuntimeApi, PolkadotExecutor>(config)?;
+			= new_partial::<pirl_runtime::RuntimeApi, PolkadotExecutor>(config)?;
 		Ok((Arc::new(Client::Polkadot(client)), backend, import_queue, task_manager))
 	}
 }
@@ -886,7 +886,7 @@ pub fn build_light(config: Configuration) -> Result<(TaskManager, RpcHandlers), 
 	} else if config.chain_spec.is_westend() {
 		new_light::<westend_runtime::RuntimeApi, WestendExecutor>(config)
 	} else {
-		new_light::<polkadot_runtime::RuntimeApi, PolkadotExecutor>(config)
+		new_light::<pirl_runtime::RuntimeApi, PolkadotExecutor>(config)
 	}
 }
 
@@ -918,7 +918,7 @@ pub fn build_full(
 			Default::default(),
 		).map(|full| full.with_client(Client::Westend))
 	} else {
-		new_full::<polkadot_runtime::RuntimeApi, PolkadotExecutor>(
+		new_full::<pirl_runtime::RuntimeApi, PolkadotExecutor>(
 			config,
 			is_collator,
 			grandpa_pause,

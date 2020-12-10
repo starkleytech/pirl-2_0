@@ -69,7 +69,7 @@ polkadot-node-subsystem-util = { path = "../subsystem-util" }
 polkadot-runtime-parachains = { path = "../../runtime/parachains" }
 
 # Polkadot Runtimes
-polkadot-runtime = { path = "../../runtime/polkadot" }
+pirl-runtime = { path = "../../runtime/pirl" }
 kusama-runtime = { path = "../../runtime/kusama" }
 westend-runtime = { path = "../../runtime/westend" }
 rococo-runtime = { path = "../../runtime/rococo" }
@@ -101,7 +101,7 @@ db = ["service/db"]
 full-node = [
 	"polkadot-node-core-av-store",
 ]
-runtime-benchmarks = ["polkadot-runtime/runtime-benchmarks", "kusama-runtime/runtime-benchmarks", "westend-runtime/runtime-benchmarks"]
+runtime-benchmarks = ["pirl-runtime/runtime-benchmarks", "kusama-runtime/runtime-benchmarks", "westend-runtime/runtime-benchmarks"]
 real-overseer = [
 	"polkadot-availability-bitfield-distribution",
 	"polkadot-availability-distribution",

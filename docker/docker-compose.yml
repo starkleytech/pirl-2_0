@@ -1,15 +1,15 @@
 version: '3'
 services:
-  polkadot:
+  pirl:
     build:
       context: .
     ports:
       - "127.0.0.1:30333:30333/tcp"
       - "127.0.0.1:9933:9933/tcp"
-    image: chevdor/polkadot:latest
+    image: starkleytech/pirl:latest
     volumes:
-      - "polkadot-data:/data"
-    command: polkadot
+      - "pirl-data:/data"
+    command: pirl
 
 volumes:
-  polkadot-data:
+  pirl-data:

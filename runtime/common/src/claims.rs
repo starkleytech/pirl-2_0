@@ -132,7 +132,7 @@ decl_event!(
 		Balance = BalanceOf<T>,
 		AccountId = <T as frame_system::Config>::AccountId
 	{
-		/// Someone claimed some DOTs. [who, ethereum_address, amount]
+		/// Someone claimed some PIRLS. [who, ethereum_address, amount]
 		Claimed(AccountId, EthereumAddress, Balance),
 	}
 );
@@ -203,7 +203,7 @@ decl_module! {
 		/// Deposit one of this module's events by using the default implementation.
 		fn deposit_event() = default;
 
-		/// Make a claim to collect your DOTs.
+		/// Make a claim to collect your PIRLS.
 		///
 		/// The dispatch origin for this call must be _None_.
 		///
@@ -253,14 +253,14 @@ decl_module! {
 			Self::process_claim(signer, dest)?;
 		}
 
-		/// Mint a new claim to collect DOTs.
+		/// Mint a new claim to collect PIRLS.
 		///
 		/// The dispatch origin for this call must be _Root_.
 		///
 		/// Parameters:
 		/// - `who`: The Ethereum address allowed to collect this claim.
-		/// - `value`: The number of DOTs that will be claimed.
-		/// - `vesting_schedule`: An optional vesting schedule for these DOTs.
+		/// - `value`: The number of PIRLS that will be claimed.
+		/// - `vesting_schedule`: An optional vesting schedule for these PIRLS.
 		///
 		/// <weight>
 		/// The weight of this call is invariant over the input parameters.
@@ -300,7 +300,7 @@ decl_module! {
 			}
 		}
 
-		/// Make a claim to collect your DOTs by signing a statement.
+		/// Make a claim to collect your PIRLS by signing a statement.
 		///
 		/// The dispatch origin for this call must be _None_.
 		///

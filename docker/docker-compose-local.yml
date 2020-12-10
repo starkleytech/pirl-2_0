@@ -7,10 +7,10 @@ services:
       - "30333:30333"
       - "9933:9933"
       - "9944:9944"
-    image: chevdor/polkadot:latest
+    image: starkleytech/pirl:latest
     volumes:
-      - "polkadot-data-alice:/data"
-    command: polkadot --chain=polkadot-local --alice -d /data --node-key 0000000000000000000000000000000000000000000000000000000000000001
+      - "pirl-data-alice:/data"
+    command: pirl --chain=pirl-local --alice -d /data --node-key 0000000000000000000000000000000000000000000000000000000000000001
     networks:
       testing_net:
         ipv4_address: 172.28.1.1
@@ -22,19 +22,19 @@ services:
       - "30344:30344"
       - "9935:9935"
       - "9945:9945"
-    image: chevdor/polkadot:latest
+    image: starkleytech/pirl:latest
     volumes:
-      - "polkadot-data-bob:/data"
+      - "pirl-data-bob:/data"
     links:
       - "node_alice:alice"
-    command: polkadot --chain=polkadot-local --bob -d /data --port 30344 --rpc-port 9935 --ws-port 9945 --bootnodes '/ip4/172.28.1.1/tcp/30333/p2p/QmRpheLN4JWdAnY7HGJfWFNbfkQCb6tFf4vvA6hgjMZKrR'
+    command: pirl --chain=pirl-local --bob -d /data --port 30344 --rpc-port 9935 --ws-port 9945 --bootnodes '/ip4/172.28.1.1/tcp/30333/p2p/QmRpheLN4JWdAnY7HGJfWFNbfkQCb6tFf4vvA6hgjMZKrR'
     networks:
       testing_net:
         ipv4_address: 172.28.1.2
 
 volumes:
-  polkadot-data-alice:
-  polkadot-data-bob:
+  pirl-data-alice:
+  pirl-data-bob:
 
 networks:
   testing_net:
