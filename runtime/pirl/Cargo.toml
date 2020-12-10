@@ -74,6 +74,9 @@ primitives = { package = "polkadot-primitives", path = "../../primitives", defau
 pallet-contracts = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false  }
 pallet-contracts-primitives = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false  }
 pallet-contracts-rpc-runtime-api = { version = '0.8.0', git = "https://github.com/paritytech/substrate", branch = "master",  default-features = false }
+pallet-contracts-rpc = { version = "0.8.0", git = "https://github.com/paritytech/substrate", branch = "master" }
+
+
 
 [dev-dependencies]
 hex-literal = "0.3.1"

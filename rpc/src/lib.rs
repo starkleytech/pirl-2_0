@@ -39,6 +39,9 @@ use sc_finality_grandpa::FinalityProofProvider;
 use sc_sync_state_rpc::{SyncStateRpcApi, SyncStateRpcHandler};
 pub use sc_rpc::{DenyUnsafe, SubscriptionTaskExecutor};
 
+
+use pallet_contracts_rpc::ContractsRuntimeApi;
+
 /// A type representing all RPC extensions.
 pub type RpcExtension = jsonrpc_core::IoHandler<sc_rpc::Metadata>;
 
