@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2020 
+ *   All rights reserved.
+ */
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
 // This file is part of Polkadot.
 

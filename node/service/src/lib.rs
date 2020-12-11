@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2020 
+ *   All rights reserved.
+ */
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
 // This file is part of Polkadot.
 
@@ -310,11 +314,11 @@ where
 #[cfg(all(feature = "full-node", feature = "real-overseer"))]
 fn real_overseer<Spawner, RuntimeClient>(
 	leaves: impl IntoIterator<Item = BlockInfo>,
-	keystore: SyncCryptoStorePtr,
-	runtime_client: Arc<RuntimeClient>,
-	availability_config: AvailabilityConfig,
-	network_service: Arc<sc_network::NetworkService<Block, Hash>>,
-	authority_discovery: AuthorityDiscoveryService,
+	_: SyncCryptoStorePtr,
+	_: Arc<RuntimeClient>,
+	_: AvailabilityConfig,
+	_: Arc<sc_network::NetworkService<Block, Hash>>,
+	_: AuthorityDiscoveryService,
 	registry: Option<&Registry>,
 	spawner: Spawner,
 	is_collator: IsCollator,
@@ -415,7 +419,7 @@ where
 
 	Overseer::new(
 		leaves,
-		all_subsystems,
+		AllSubsystems::<()>::dummy(),
 		registry,
 		spawner,
 	).map_err(|e| Error::Other(format!("Failed to create an Overseer: {:?}", e)))
