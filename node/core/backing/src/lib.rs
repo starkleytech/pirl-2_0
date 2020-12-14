@@ -37,6 +37,7 @@ use polkadot_node_primitives::{
 	FromTableMisbehavior, Statement, SignedFullStatement, MisbehaviorReport, ValidationResult,
 };
 use polkadot_subsystem::{
+	jaeger,
 	messages::{
 		AllMessages, AvailabilityStoreMessage, CandidateBackingMessage, CandidateSelectionMessage,
 		CandidateValidationMessage, PoVDistributionMessage, ProvisionableData,
@@ -404,6 +405,12 @@ async fn validate_and_make_available(
 		ValidationResult::Valid(commitments, validation_data) => {
 			// If validation produces a new set of commitments, we vote the candidate as invalid.
 			if commitments.hash() != expected_commitments_hash {
+				tracing::trace!(
+					target: LOG_TARGET,
+					candidate_receipt = ?candidate,
+					actual_commitments = ?commitments,
+					"Commitments obtained with validation don't match the announced by the candidate receipt",
+				);
 				Err(candidate)
 			} else {
 				let erasure_valid = make_pov_available(
@@ -418,11 +425,25 @@ async fn validate_and_make_available(
 
 				match erasure_valid {
 					Ok(()) => Ok((candidate, commitments, pov.clone())),
-					Err(InvalidErasureRoot) => Err(candidate),
+					Err(InvalidErasureRoot) => {
+						tracing::trace!(
+							target: LOG_TARGET,
+							candidate_receipt = ?candidate,
+							actual_commitments = ?commitments,
+							"Erasure root doesn't match the announced by the candidate receipt",
+						);
+						Err(candidate)
+					},
 				}
 			}
 		}
-		ValidationResult::Invalid(_reason) => {
+		ValidationResult::Invalid(reason) => {
+			tracing::trace!(
+				target: LOG_TARGET,
+				candidate_receipt = ?candidate,
+				reason = ?reason,
+				"Validation yielded an invalid candidate",
+			);
 			Err(candidate)
 		}
 	};
@@ -437,10 +458,12 @@ impl CandidateBackingJob {
 	async fn run_loop(
 		mut self,
 		mut rx_to: mpsc::Receiver<CandidateBackingMessage>,
+		span: &jaeger::JaegerSpan
 	) -> Result<(), Error> {
 		loop {
 			futures::select! {
 				validated_command = self.background_validation.next() => {
+					let _span = span.child("background validation");
 					if let Some(c) = validated_command {
 						self.handle_validated_candidate_command(c).await?;
 					} else {
@@ -450,6 +473,7 @@ impl CandidateBackingJob {
 				to_job = rx_to.next() => match to_job {
 					None => break,
 					Some(msg) => {
+						let _span = span.child("process message");
 						self.process_msg(msg).await?;
 					}
 				}
@@ -734,7 +758,7 @@ impl CandidateBackingJob {
 		self.background_validate_and_make_available(BackgroundValidationParams {
 			tx_from: self.tx_from.clone(),
 			tx_command: self.background_validation_tx.clone(),
-			candidate: candidate,
+			candidate,
 			relay_parent: self.parent,
 			pov: None,
 			validator_index: self.table_context.validator.as_ref().map(|v| v.index()),
@@ -850,6 +874,9 @@ impl util::JobTrait for CandidateBackingJob {
 				}
 			}
 
+			let span = jaeger::hash_span(&parent, "run:backing");
+			let _span = span.child("runtime apis");
+
 			let (validators, groups, session_index, cores) = futures::try_join!(
 				try_runtime_api!(request_validators(parent, &mut tx_from).await),
 				try_runtime_api!(request_validator_groups(parent, &mut tx_from).await),
@@ -865,6 +892,9 @@ impl util::JobTrait for CandidateBackingJob {
 			let (validator_groups, group_rotation_info) = try_runtime_api!(groups);
 			let session_index = try_runtime_api!(session_index);
 			let cores = try_runtime_api!(cores);
+
+			drop(_span);
+			let _span = span.child("validator construction");
 
 			let signing_context = SigningContext { parent_hash: parent, session_index };
 			let validator = match Validator::construct(
@@ -884,6 +914,10 @@ impl util::JobTrait for CandidateBackingJob {
 					return Ok(())
 				}
 			};
+
+			drop(_span);
+			let _span = span.child("calc validator groups");
+
 
 			let mut groups = HashMap::new();
 
@@ -916,6 +950,9 @@ impl util::JobTrait for CandidateBackingJob {
 				Some((assignment, required_collator)) => (Some(assignment), required_collator),
 			};
 
+			drop(_span);
+			let _span = span.child("wait for candidate backing job");
+
 			let (background_tx, background_rx) = mpsc::channel(16);
 			let job = CandidateBackingJob {
 				parent,
@@ -934,10 +971,10 @@ impl util::JobTrait for CandidateBackingJob {
 				background_validation_tx: background_tx,
 				metrics,
 			};
+			drop(_span);
 
-			job.run_loop(rx_to).await
-		}
-		.boxed()
+			job.run_loop(rx_to, &span).await
+		}.boxed()
 	}
 }
 
@@ -1624,27 +1661,37 @@ mod tests {
 				AllMessages::Provisioner(
 					ProvisionerMessage::ProvisionableData(
 						_,
-						ProvisionableData::BackedCandidate(BackedCandidate {
-							candidate,
-							validity_votes,
-							validator_indices,
+						ProvisionableData::BackedCandidate(CandidateReceipt {
+							descriptor,
+							..
 						})
 					)
-				) if candidate == candidate_a => {
-					assert_eq!(validity_votes.len(), 3);
-
-					assert!(validity_votes.contains(
-						&ValidityAttestation::Implicit(signed_a.signature().clone())
-					));
-					assert!(validity_votes.contains(
-						&ValidityAttestation::Explicit(signed_b.signature().clone())
-					));
-					assert!(validity_votes.contains(
-						&ValidityAttestation::Explicit(signed_c.signature().clone())
-					));
-					assert_eq!(validator_indices, bitvec::bitvec![Lsb0, u8; 1, 0, 1, 1]);
-				}
+				) if descriptor == candidate_a.descriptor
 			);
+
+			let (tx, rx) = oneshot::channel();
+			let msg = CandidateBackingMessage::GetBackedCandidates(
+				test_state.relay_parent,
+				vec![candidate_a.hash()],
+				tx,
+			);
+
+			virtual_overseer.send(FromOverseer::Communication{ msg }).await;
+
+			let candidates = rx.await.unwrap();
+			assert_eq!(1, candidates.len());
+			assert_eq!(candidates[0].validity_votes.len(), 3);
+
+			assert!(candidates[0].validity_votes.contains(
+				&ValidityAttestation::Implicit(signed_a.signature().clone())
+			));
+			assert!(candidates[0].validity_votes.contains(
+				&ValidityAttestation::Explicit(signed_b.signature().clone())
+			));
+			assert!(candidates[0].validity_votes.contains(
+				&ValidityAttestation::Explicit(signed_c.signature().clone())
+			));
+			assert_eq!(candidates[0].validator_indices, bitvec::bitvec![Lsb0, u8; 1, 0, 1, 1]);
 
 			virtual_overseer.send(FromOverseer::Signal(
 				OverseerSignal::ActiveLeaves(ActiveLeavesUpdate::stop_work(test_state.relay_parent)))
