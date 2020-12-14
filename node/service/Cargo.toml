@@ -69,6 +69,8 @@ polkadot-subsystem = { package = "polkadot-node-subsystem", path = "../subsystem
 polkadot-node-subsystem-util = { path = "../subsystem-util" }
 polkadot-runtime-parachains = { path = "../../runtime/parachains" }
 
+
+
 # Polkadot Runtimes
 pirl-runtime = { path = "../../runtime/pirl" }
 kusama-runtime = { path = "../../runtime/kusama" }
@@ -91,6 +93,11 @@ polkadot-node-core-provisioner = { path = "../core/provisioner", optional = true
 polkadot-node-core-runtime-api = { path = "../core/runtime-api", optional = true }
 polkadot-pov-distribution = { path = "../network/pov-distribution", optional = true }
 polkadot-statement-distribution = { path = "../network/statement-distribution", optional = true }
+pallet-contracts = { git = "https://github.com/paritytech/substrate", branch = "master", default-features = false  }
+
+pallet-contracts-rpc = { version = "0.8.0", git = "https://github.com/paritytech/substrate", branch = "master" }
+pallet-contracts-rpc-runtime-api = { version = "0.8.0", default-features = false, git = "https://github.com/paritytech/substrate", branch = "master" }
+
 
 [dev-dependencies]
 polkadot-test-client = { path = "../test/client" }
