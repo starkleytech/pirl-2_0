@@ -26,7 +26,7 @@ substrate-prometheus-endpoint = { git = "https://github.com/paritytech/substrate
 thiserror = "1.0.22"
 
 [dev-dependencies]
-assert_matches = "1.4.0"
+assert_matches = "1.5.0"
 async-trait = "0.1.42"
 futures = { version = "0.3.8", features = ["thread-pool"] }
 parking_lot = "0.11.1"
